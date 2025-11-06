@@ -1,37 +1,16 @@
 /**
  * Shopify Storefront API Service
  * All GraphQL queries and mutations for Shopify Storefront API
+ * Uses Shopify CLI-style client for better connection handling
  */
-import { GraphQLClient } from 'graphql-request';
+import { shopifyClient } from '../lib/shopify-client.js';
 import { config } from '../config.js';
 
-// Helper function to log authentication errors
+// Helper function to handle authentication errors (silent - no logging)
 function handleAuthError(error, operation) {
-  if (error.response?.status === 401 || error.response?.status === 403) {
-    console.error(`\n❌ Authentication failed for ${operation}`);
-    console.error('   Status:', error.response.status);
-    console.error('   Store Domain:', config.shopify.storeDomain);
-    console.error('   Token (first 15 chars):', config.shopify.storefrontAccessToken?.substring(0, 15) + '...');
-    console.error('   API Version:', config.shopify.apiVersion);
-    console.error('\n🔍 Troubleshooting steps:');
-    console.error('   1. Verify your .env file has correct SHOPIFY_STOREFRONT_ACCESS_TOKEN');
-    console.error('   2. Ensure the token starts with "shpat_" or "shpca_"');
-    console.error('   3. Check that the app is INSTALLED on your store');
-    console.error('   4. Verify Storefront API scopes are enabled in Partner Dashboard');
-    console.error('   5. Generate a NEW token after installing the app');
-    console.error('   6. Ensure store domain includes ".myshopify.com"');
-    console.error('');
-  }
+  // Error is already thrown with proper details, just re-throw
+  throw error;
 }
-
-const client = new GraphQLClient(
-  `https://${config.shopify.storeDomain}/api/${config.shopify.apiVersion}/graphql.json`,
-  {
-    headers: {
-      'X-Shopify-Storefront-Access-Token': config.shopify.storefrontAccessToken,
-    },
-  }
-);
 
 /**
  * Helper to transform Shopify image URLs with CDN optimizations
@@ -182,8 +161,8 @@ export async function getProducts(collectionHandle, options = {}) {
   
   try {
     const data = collectionHandle
-      ? await client.request(query, variables)
-      : await client.request(query, variables);
+      ? await shopifyClient.request(query, variables)
+      : await shopifyClient.request(query, variables);
     
     const products = collectionHandle
       ? data.collection?.products.edges.map(e => {
@@ -291,7 +270,7 @@ export async function getProduct(handle) {
   `;
   
   try {
-    const data = await client.request(query, { handle });
+    const data = await shopifyClient.request(query, { handle });
     const product = data.product;
     
     if (!product) {
@@ -338,7 +317,7 @@ export async function getVariantDetails(variantId) {
   `;
   
   try {
-    const data = await client.request(query, { id: variantId });
+    const data = await shopifyClient.request(query, { id: variantId });
     return data.node;
   } catch (error) {
     console.error('Error fetching variant:', error);
@@ -370,7 +349,7 @@ export async function getCollections() {
   `;
   
   try {
-    const data = await client.request(query);
+    const data = await shopifyClient.request(query);
     return data.collections.edges.map(e => ({
       ...e.node,
       imageUrl: optimizeImageUrl(e.node.image?.url, { width: 400, format: 'webp' }),
@@ -403,7 +382,7 @@ export async function getCollection(handle) {
   `;
   
   try {
-    const data = await client.request(query, { handle });
+    const data = await shopifyClient.request(query, { handle });
     if (!data.collection) return null;
     
     return {
@@ -450,7 +429,7 @@ export async function searchProducts(query, limit = 10) {
   `;
   
   try {
-    const data = await client.request(searchQuery, { query, first: limit });
+    const data = await shopifyClient.request(searchQuery, { query, first: limit });
     return data.products.edges.map(e => {
       const product = e.node;
       return {
@@ -486,7 +465,7 @@ export async function createCart() {
   `;
   
   try {
-    const data = await client.request(mutation);
+    const data = await shopifyClient.request(mutation);
     if (data.cartCreate.userErrors?.length > 0) {
       throw new Error(data.cartCreate.userErrors[0].message);
     }
@@ -540,7 +519,7 @@ export async function getCart(cartId) {
   `;
   
   try {
-    const data = await client.request(query, { cartId });
+    const data = await shopifyClient.request(query, { cartId });
     if (!data.cart) return null;
     
     return {
@@ -576,7 +555,7 @@ export async function addToCart(cartId, variantId, quantity = 1) {
   `;
   
   try {
-    const data = await client.request(mutation, {
+    const data = await shopifyClient.request(mutation, {
       cartId,
       lines: [{ merchandiseId: variantId, quantity }],
     });
@@ -608,7 +587,7 @@ export async function updateCartLine(cartId, lineId, quantity) {
   `;
   
   try {
-    const data = await client.request(mutation, {
+    const data = await shopifyClient.request(mutation, {
       cartId,
       lines: [{ id: lineId, quantity }],
     });
@@ -640,7 +619,7 @@ export async function removeFromCart(cartId, lineId) {
   `;
   
   try {
-    const data = await client.request(mutation, {
+    const data = await shopifyClient.request(mutation, {
       cartId,
       lineIds: [lineId],
     });
@@ -676,7 +655,7 @@ export async function customerAccessTokenCreate(email, password) {
   `;
   
   try {
-    const data = await client.request(mutation, {
+    const data = await shopifyClient.request(mutation, {
       input: { email, password },
     });
     
@@ -708,7 +687,7 @@ export async function customerCreate(email, password, firstName, lastName) {
   `;
   
   try {
-    const data = await client.request(mutation, {
+    const data = await shopifyClient.request(mutation, {
       input: {
         email,
         password,
@@ -751,7 +730,7 @@ export async function getCustomer(accessToken) {
   `;
   
   try {
-    const data = await client.request(query, { customerAccessToken: accessToken });
+    const data = await shopifyClient.request(query, { customerAccessToken: accessToken });
     return data.customer;
   } catch (error) {
     console.error('Error fetching customer:', error);
@@ -795,7 +774,7 @@ export async function getCustomerOrders(accessToken, limit = 10) {
   `;
   
   try {
-    const data = await client.request(query, { customerAccessToken: accessToken, first: limit });
+    const data = await shopifyClient.request(query, { customerAccessToken: accessToken, first: limit });
     return data.customer?.orders?.edges.map(e => e.node) || [];
   } catch (error) {
     console.error('Error fetching customer orders:', error);
