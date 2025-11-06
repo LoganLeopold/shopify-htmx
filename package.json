@@ -1,0 +1,24 @@
+{
+  "name": "shopify-htmx",
+  "version": "1.0.0",
+  "description": "Hyper-optimized headless Shopify storefront with HTMX and Web Components",
+  "type": "module",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "dev": "node --watch server/app.js"
+  },
+  "keywords": ["shopify", "htmx", "express", "headless"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "express-session": "^1.17.3",
+    "compression": "^1.7.4",
+    "helmet": "^7.1.0",
+    "@shopify/shopify-api": "^9.1.0",
+    "graphql-request": "^6.1.0",
+    "dotenv": "^16.3.1"
+  }
+}

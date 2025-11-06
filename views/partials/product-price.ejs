@@ -1,0 +1,10 @@
+<div id="product-price" class="product-price">
+  <span class="product-price__amount">
+    $<%= parseFloat(variant.priceV2.amount).toFixed(2) %>
+  </span>
+  <% if (!variant.availableForSale) { %>
+    <span class="product-price__status" style="color:var(--color-error);">
+      Out of Stock
+    </span>
+  <% } %>
+</div>

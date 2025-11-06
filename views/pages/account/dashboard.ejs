@@ -1,0 +1,65 @@
+<style>
+  .account-dashboard {
+    max-width: 800px;
+    margin: var(--space-xl) auto;
+    padding: var(--space-lg);
+  }
+  
+  .account-dashboard__title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-xl);
+  }
+  
+  .account-dashboard__nav {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+  
+  .account-dashboard__nav-link {
+    padding: var(--space-md);
+    border-bottom: 2px solid transparent;
+    transition: border-color var(--transition-fast);
+  }
+  
+  .account-dashboard__nav-link:hover {
+    border-bottom-color: var(--color-primary);
+  }
+  
+  .account-dashboard__section {
+    margin-bottom: var(--space-xl);
+  }
+  
+  .account-dashboard__section-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-md);
+  }
+</style>
+
+<div class="account-dashboard">
+  <h1 class="account-dashboard__title">Account Dashboard</h1>
+  
+  <nav class="account-dashboard__nav">
+    <a href="/account" class="account-dashboard__nav-link">Dashboard</a>
+    <a href="/account/orders" class="account-dashboard__nav-link">Orders</a>
+    <a href="/account/addresses" class="account-dashboard__nav-link">Addresses</a>
+    <form method="POST" action="/account/logout" style="display:inline;">
+      <button type="submit" style="padding:var(--space-md);background:none;border:none;cursor:pointer;">Logout</button>
+    </form>
+  </nav>
+  
+  <div class="account-dashboard__section">
+    <h2 class="account-dashboard__section-title">Account Information</h2>
+    <p><strong>Name:</strong> <%= customer.firstName %> <%= customer.lastName %></p>
+    <p><strong>Email:</strong> <%= customer.email %></p>
+    <% if (customer.phone) { %>
+      <p><strong>Phone:</strong> <%= customer.phone %></p>
+    <% } %>
+  </div>
+  
+  <div class="account-dashboard__section">
+    <h2 class="account-dashboard__section-title">Quick Links</h2>
+    <a href="/account/orders">View Order History</a>
+  </div>
+</div>

@@ -1,0 +1,100 @@
+<style>
+  .home-hero {
+    padding: var(--space-2xl) 0;
+    text-align: center;
+    background: var(--color-surface-alt);
+    margin-bottom: var(--space-2xl);
+  }
+  
+  .home-hero__title {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-md);
+  }
+  
+  .home-hero__description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .home-section {
+    margin-bottom: var(--space-2xl);
+  }
+  
+  .home-section__title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-lg);
+  }
+  
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-lg);
+  }
+  
+  .collection-card {
+    display: block;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    transition: transform var(--transition-fast);
+  }
+  
+  .collection-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .collection-card__image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  
+  .collection-card__title {
+    padding: var(--space-md);
+    background: var(--color-surface);
+    text-align: center;
+    font-weight: var(--font-weight-semibold);
+  }
+</style>
+
+<div class="home">
+  <section class="home-hero">
+    <h1 class="home-hero__title">
+      <%= siteConfig?.heroTitle || 'Welcome' %>
+    </h1>
+    <p class="home-hero__description">
+      <%= siteConfig?.heroDescription || 'Discover our amazing products' %>
+    </p>
+  </section>
+  
+  <% if (collections && collections.length > 0) { %>
+    <section class="home-section">
+      <h2 class="home-section__title">Shop Collections</h2>
+      <div class="collection-grid">
+        <% collections.forEach(collection => { %>
+          <a href="/collections/<%= collection.handle %>" class="collection-card">
+            <% if (collection.image || collection.imageUrl) { %>
+              <img src="<%= collection.imageUrl || collection.image?.url %>" 
+                   alt="<%= collection.title %>"
+                   class="collection-card__image"
+                   loading="lazy">
+            <% } %>
+            <div class="collection-card__title"><%= collection.title %></div>
+          </a>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+  
+  <% if (products && products.length > 0) { %>
+    <section class="home-section">
+      <h2 class="home-section__title">Featured Products</h2>
+      <div class="product-grid">
+        <% products.forEach(product => { %>
+          <%- include('../partials/product-card', { product }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+</div>

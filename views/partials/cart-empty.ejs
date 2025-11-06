@@ -1,0 +1,24 @@
+<style>
+  .cart-empty {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-md);
+  }
+  
+  .cart-empty__message {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-lg);
+  }
+  
+  .cart-empty__link {
+    display: inline-block;
+    padding: var(--space-md) var(--space-xl);
+    background: var(--color-primary);
+    color: var(--color-surface);
+    border-radius: var(--border-radius-md);
+  }
+</style>
+
+<div class="cart-empty">
+  <p class="cart-empty__message">Your cart is empty</p>
+  <a href="/collections" class="cart-empty__link">Continue Shopping</a>
+</div>

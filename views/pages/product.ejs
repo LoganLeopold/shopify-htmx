@@ -1,0 +1,113 @@
+<style>
+  .product-page {
+    padding: var(--space-lg) 0;
+  }
+  
+  .product-page__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+  }
+  
+  @media (max-width: 768px) {
+    .product-page__container {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .product-page__title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-md);
+  }
+  
+  .product-price {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--space-lg);
+  }
+  
+  .product-description {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
+    border-top: var(--border-width) solid var(--color-border);
+  }
+  
+  .gallery-main {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--color-surface-alt);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    margin-bottom: var(--space-md);
+  }
+  
+  .gallery-main__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .gallery-thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: var(--space-sm);
+  }
+  
+  .gallery-thumb {
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color var(--transition-fast);
+  }
+  
+  .gallery-thumb:hover,
+  .gallery-thumb.active {
+    border-color: var(--color-primary);
+  }
+</style>
+
+<div class="product-page">
+  <div class="container product-page__container">
+    <div class="product-page__gallery">
+      <image-gallery>
+        <div class="gallery-main">
+          <img src="<%= product.images[0]?.url %>" 
+               alt="<%= product.title %>"
+               class="gallery-main__image"
+               loading="eager">
+        </div>
+        <% if (product.images.length > 1) { %>
+          <div class="gallery-thumbs">
+            <% product.images.forEach((image, index) => { %>
+              <img src="<%= image.url %>" 
+                   alt="<%= image.altText || product.title %>"
+                   class="gallery-thumb<%= index === 0 ? ' active' : '' %>"
+                   data-src="<%= image.url %>"
+                   tabindex="0"
+                   role="button"
+                   aria-label="View image <%= index + 1 %>"
+                   <%= index === 0 ? 'aria-selected="true"' : '' %>>
+            <% }) %>
+          </div>
+        <% } %>
+      </image-gallery>
+    </div>
+    
+    <div class="product-page__info">
+      <h1 class="product-page__title"><%= product.title %></h1>
+      
+      <div id="product-price" class="product-price">
+        $<%= parseFloat(product.variants[0]?.priceV2?.amount || product.priceRange.minVariantPrice.amount).toFixed(2) %>
+      </div>
+      
+      <%- include('../partials/product-form', { product }) %>
+      
+      <div class="product-description">
+        <%- product.descriptionHtml || product.description %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,114 @@
+<style>
+  cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 400px;
+    z-index: var(--z-drawer);
+    pointer-events: none;
+  }
+  
+  cart-drawer[open] {
+    pointer-events: all;
+  }
+  
+  .cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    pointer-events: none;
+  }
+  
+  cart-drawer[open] .cart-overlay {
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  .cart-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    transition: transform var(--transition-base);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  cart-drawer[open] .cart-drawer {
+    transform: translateX(0);
+  }
+  
+  .cart-drawer__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+  
+  .cart-close {
+    font-size: var(--text-2xl);
+    line-height: 1;
+    padding: var(--space-xs);
+  }
+  
+  .cart-drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-md);
+  }
+  
+  .cart-drawer__footer {
+    padding: var(--space-md);
+    border-top: var(--border-width) solid var(--color-border);
+  }
+  
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-md);
+  }
+</style>
+
+<cart-drawer>
+  <div class="cart-overlay"></div>
+  <div class="cart-drawer">
+    <div class="cart-drawer__header">
+      <h2>Your Cart</h2>
+      <button class="cart-close" aria-label="Close cart">×</button>
+    </div>
+    
+    <div class="cart-drawer-content">
+      <% if (!cart || cart.lines.length === 0) { %>
+        <p>Your cart is empty</p>
+      <% } else { %>
+        <%- include('cart-items', { cart }) %>
+      <% } %>
+    </div>
+    
+    <% if (cart && cart.lines.length > 0) { %>
+      <div class="cart-drawer__footer">
+        <div class="cart-total">
+          <span>Total:</span>
+          <span>$<%= cart.cost?.totalAmount?.amount || '0.00' %></span>
+        </div>
+        <a href="<%= cart.checkoutUrl %>" class="button button--primary" style="display:block;text-align:center;padding:var(--space-md);">
+          Checkout
+        </a>
+        <a href="/cart" style="display:block;text-align:center;margin-top:var(--space-sm);">
+          View Full Cart
+        </a>
+      </div>
+    <% } %>
+  </div>
+</cart-drawer>

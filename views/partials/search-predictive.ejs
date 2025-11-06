@@ -1,0 +1,83 @@
+<style>
+  .search-results-predictive {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--space-xs);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: var(--z-dropdown);
+  }
+  
+  .search-result-item {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-bottom: var(--border-width) solid var(--color-border-light);
+    transition: background var(--transition-fast);
+  }
+  
+  .search-result-item:last-child {
+    border-bottom: none;
+  }
+  
+  .search-result-item:hover,
+  .search-result-item[aria-selected="true"] {
+    background: var(--color-surface-alt);
+  }
+  
+  .search-result-item__image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .search-result-item__details {
+    flex: 1;
+  }
+  
+  .search-result-item__title {
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-xs);
+  }
+  
+  .search-result-item__price {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+  
+  .search-results-footer {
+    padding: var(--space-md);
+    text-align: center;
+    border-top: var(--border-width) solid var(--color-border-light);
+  }
+</style>
+
+<div class="search-results-predictive">
+  <% products.forEach(product => { %>
+    <a href="/products/<%= product.handle %>" class="search-result-item">
+      <% if (product.image || product.imageUrl) { %>
+        <img src="<%= product.imageUrl || product.image?.url %>" 
+             alt="<%= product.title %>"
+             class="search-result-item__image"
+             loading="lazy">
+      <% } %>
+      <div class="search-result-item__details">
+        <div class="search-result-item__title"><%= product.title %></div>
+        <div class="search-result-item__price">
+          $<%= parseFloat(product.price?.amount || '0').toFixed(2) %>
+        </div>
+      </div>
+    </a>
+  <% }) %>
+  
+  <div class="search-results-footer">
+    <a href="/search?q=<%= encodeURIComponent(query) %>">View all results</a>
+  </div>
+</div>

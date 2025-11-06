@@ -1,0 +1,70 @@
+<style>
+  .orders-page {
+    max-width: 1000px;
+    margin: var(--space-xl) auto;
+    padding: var(--space-lg);
+  }
+  
+  .orders-page__title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-xl);
+  }
+  
+  .orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  
+  .order-item {
+    padding: var(--space-lg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .order-item__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+  
+  .order-item__number {
+    font-weight: var(--font-weight-semibold);
+  }
+  
+  .order-item__date {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+  
+  .order-item__total {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-top: var(--space-md);
+  }
+</style>
+
+<div class="orders-page">
+  <h1 class="orders-page__title">Order History</h1>
+  
+  <% if (!orders || orders.length === 0) { %>
+    <p>You haven't placed any orders yet.</p>
+    <a href="/collections">Start Shopping</a>
+  <% } else { %>
+    <div class="orders-list">
+      <% orders.forEach(order => { %>
+        <div class="order-item">
+          <div class="order-item__header">
+            <div class="order-item__number">Order <%= order.name %></div>
+            <div class="order-item__date">
+              <%= new Date(order.createdAt).toLocaleDateString() %>
+            </div>
+          </div>
+          <div class="order-item__total">
+            Total: $<%= parseFloat(order.totalPriceV2.amount).toFixed(2) %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>

@@ -1,0 +1,63 @@
+<style>
+  .footer {
+    margin-top: auto;
+    padding: var(--space-xl) 0;
+    border-top: var(--border-width) solid var(--color-border);
+    background: var(--color-surface-alt);
+  }
+  
+  .footer__container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+  }
+  
+  .footer__section-title {
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-md);
+  }
+  
+  .footer__link {
+    display: block;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .footer__link:hover {
+    color: var(--color-primary);
+  }
+  
+  .footer__copyright {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding-top: var(--space-lg);
+    border-top: var(--border-width) solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+</style>
+
+<footer class="footer">
+  <div class="container footer__container">
+    <div>
+      <h3 class="footer__section-title">Shop</h3>
+      <a href="/collections" class="footer__link">All Collections</a>
+      <a href="/search" class="footer__link">Search</a>
+    </div>
+    
+    <div>
+      <h3 class="footer__section-title">Account</h3>
+      <% if (isAuthenticated) { %>
+        <a href="/account" class="footer__link">Dashboard</a>
+        <a href="/account/orders" class="footer__link">Orders</a>
+      <% } else { %>
+        <a href="/account/login" class="footer__link">Login</a>
+        <a href="/account/register" class="footer__link">Register</a>
+      <% } %>
+    </div>
+    
+    <div class="footer__copyright">
+      <p>&copy; <%= new Date().getFullYear() %> <%= siteConfig?.name || 'Shop' %>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

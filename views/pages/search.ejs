@@ -1,0 +1,58 @@
+<style>
+  .search-page {
+    padding: var(--space-lg) 0;
+  }
+  
+  .search-page__header {
+    margin-bottom: var(--space-xl);
+  }
+  
+  .search-page__title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-md);
+  }
+  
+  .search-page__query {
+    color: var(--color-text-muted);
+  }
+  
+  .search-empty {
+    text-align: center;
+    padding: var(--space-2xl);
+    color: var(--color-text-muted);
+  }
+</style>
+
+<div class="search-page">
+  <div class="search-page__header">
+    <h1 class="search-page__title">
+      Search Results
+      <% if (query) { %>
+        <span class="search-page__query">for "<%= query %>"</span>
+      <% } %>
+    </h1>
+  </div>
+  
+  <% if (!query) { %>
+    <div class="search-empty">
+      <p>Enter a search term to find products</p>
+    </div>
+  <% } else if (products.length === 0) { %>
+    <div class="search-empty">
+      <p>No results found for "<%= query %>"</p>
+      <a href="/collections">Browse Collections</a>
+    </div>
+  <% } else { %>
+    <%- include('../partials/collection-filters', { 
+      filters, 
+      collectionHandle: null 
+    }) %>
+    
+    <%- include('../partials/product-grid', { 
+      products, 
+      hasNextPage, 
+      page: currentPage,
+      query
+    }) %>
+  <% } %>
+</div>

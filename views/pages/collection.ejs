@@ -1,0 +1,43 @@
+<style>
+  .collection-page {
+    padding: var(--space-lg) 0;
+  }
+  
+  .collection-page__header {
+    margin-bottom: var(--space-xl);
+  }
+  
+  .collection-page__title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-md);
+  }
+  
+  .collection-page__description {
+    color: var(--color-text-muted);
+    max-width: 800px;
+  }
+</style>
+
+<div class="collection-page">
+  <div class="collection-page__header">
+    <h1 class="collection-page__title"><%= collection.title %></h1>
+    <% if (collection.description) { %>
+      <div class="collection-page__description">
+        <%- collection.descriptionHtml || collection.description %>
+      </div>
+    <% } %>
+  </div>
+  
+  <%- include('../partials/collection-filters', { 
+    filters, 
+    collectionHandle: collection.handle 
+  }) %>
+  
+  <%- include('../partials/product-grid', { 
+    products, 
+    hasNextPage, 
+    endCursor,
+    page: currentPage,
+    collectionHandle: collection.handle
+  }) %>
+</div>

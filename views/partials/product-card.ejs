@@ -1,0 +1,49 @@
+<style>
+  .product-card {
+    display: grid;
+    gap: var(--space-sm);
+    transition: transform var(--transition-fast);
+  }
+  
+  .product-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .product-card__image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--border-radius-md);
+    background: var(--color-surface-alt);
+  }
+  
+  .product-card__title {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+  }
+  
+  .product-card__price {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+  }
+</style>
+
+<a href="/products/<%= product.handle %>" class="product-card">
+  <% if (product.image || product.imageUrl) { %>
+    <img src="<%= product.imageUrl || product.image?.url %>" 
+         alt="<%= product.title %>"
+         class="product-card__image"
+         loading="lazy">
+  <% } else { %>
+    <div class="product-card__image" style="background:var(--color-surface-alt);display:flex;align-items:center;justify-content:center;">
+      No Image
+    </div>
+  <% } %>
+  
+  <h3 class="product-card__title"><%= product.title %></h3>
+  <p class="product-card__price">
+    $<%= parseFloat(product.price?.amount || '0').toFixed(2) %>
+  </p>
+</a>

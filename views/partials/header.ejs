@@ -1,0 +1,107 @@
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background: var(--color-surface);
+    border-bottom: var(--border-width) solid var(--color-border);
+    padding: var(--space-md) 0;
+  }
+  
+  .header__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+  }
+  
+  .header__logo {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+  }
+  
+  .header__nav {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+  
+  .header__nav-link {
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+  
+  .header__nav-link:hover {
+    color: var(--color-primary);
+  }
+  
+  .header__actions {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+  }
+</style>
+
+<header class="header">
+  <div class="container header__container">
+    <a href="/" class="header__logo">
+      <%= siteConfig?.name || 'Shop' %>
+    </a>
+    
+    <nav class="header__nav">
+      <% navigation.forEach(item => { %>
+        <a href="<%= item.href %>" class="header__nav-link">
+          <%= item.name %>
+        </a>
+      <% }) %>
+    </nav>
+    
+    <div class="header__actions">
+      <!-- Search Box -->
+      <search-box style="position:relative;">
+        <input type="search" 
+               name="q"
+               placeholder="Search..."
+               class="header__search"
+               hx-get="/search/predictive"
+               hx-trigger="input changed delay:300ms"
+               hx-target=".search-results"
+               hx-indicator=".search-loading">
+        <div class="search-loading htmx-indicator" style="display:none;">Searching...</div>
+        <div class="search-results"></div>
+      </search-box>
+      <style>
+        search-box .search-results {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          z-index: var(--z-dropdown);
+        }
+        search-box[open] .search-results {
+          display: block;
+        }
+      </style>
+      
+      <!-- Cart Summary -->
+      <div id="cart-summary" 
+           hx-get="/cart/summary" 
+           hx-trigger="cart-updated from:body"
+           hx-swap="outerHTML">
+        <%- include('cart-summary') %>
+      </div>
+      
+      <!-- Account Links -->
+      <% if (isAuthenticated) { %>
+        <a href="/account">Account</a>
+        <form method="POST" action="/account/logout" style="display:inline;">
+          <button type="submit">Logout</button>
+        </form>
+      <% } else { %>
+        <a href="/account/login">Login</a>
+      <% } %>
+    </div>
+  </div>
+</header>

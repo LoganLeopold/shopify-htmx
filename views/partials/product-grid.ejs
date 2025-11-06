@@ -1,0 +1,48 @@
+<style>
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin: var(--space-lg) 0;
+  }
+  
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: var(--space-md);
+    }
+  }
+  
+  .load-more {
+    display: block;
+    width: 100%;
+    padding: var(--space-md);
+    margin-top: var(--space-lg);
+    text-align: center;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background: var(--color-surface);
+    transition: all var(--transition-fast);
+  }
+  
+  .load-more:hover {
+    border-color: var(--color-primary);
+    background: var(--color-surface-alt);
+  }
+</style>
+
+<div id="product-grid" class="product-grid">
+  <% products.forEach(product => { %>
+    <%- include('product-card', { product }) %>
+  <% }) %>
+</div>
+
+<% if (hasNextPage) { %>
+  <button class="load-more"
+          hx-get="<%= collectionHandle ? `/collections/${collectionHandle}` : '/search' %>?page=<%= (page || 1) + 1 %><%= query ? `&q=${encodeURIComponent(query)}` : '' %>"
+          hx-target="#product-grid"
+          hx-swap="beforeend"
+          hx-indicator=".htmx-indicator">
+    Load More
+  </button>
+<% } %>

@@ -1,0 +1,73 @@
+<style>
+  .collection-list {
+    padding: var(--space-lg) 0;
+  }
+  
+  .collection-list__title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-xl);
+  }
+  
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--space-xl);
+  }
+  
+  .collection-card {
+    display: block;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    border: var(--border-width) solid var(--color-border);
+    transition: all var(--transition-fast);
+  }
+  
+  .collection-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .collection-card__image {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+  }
+  
+  .collection-card__content {
+    padding: var(--space-lg);
+  }
+  
+  .collection-card__title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .collection-card__description {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+</style>
+
+<div class="collection-list">
+  <h1 class="collection-list__title">All Collections</h1>
+  
+  <div class="collection-grid">
+    <% collections.forEach(collection => { %>
+      <a href="/collections/<%= collection.handle %>" class="collection-card">
+        <% if (collection.image || collection.imageUrl) { %>
+          <img src="<%= collection.imageUrl || collection.image?.url %>" 
+               alt="<%= collection.title %>"
+               class="collection-card__image"
+               loading="lazy">
+        <% } %>
+        <div class="collection-card__content">
+          <h3 class="collection-card__title"><%= collection.title %></h3>
+          <% if (collection.description) { %>
+            <p class="collection-card__description"><%= collection.description %></p>
+          <% } %>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</div>

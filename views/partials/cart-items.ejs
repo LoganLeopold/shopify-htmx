@@ -1,0 +1,102 @@
+<style>
+  .cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  
+  .cart-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .cart-item__image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .cart-item__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  
+  .cart-item__title {
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .cart-item__variant {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+  
+  .cart-item__price {
+    font-weight: var(--font-weight-semibold);
+  }
+  
+  .cart-item__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: flex-end;
+  }
+  
+  .cart-item__quantity {
+    width: 60px;
+    padding: var(--space-xs);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .cart-item__remove {
+    color: var(--color-error);
+    font-size: var(--text-sm);
+    padding: var(--space-xs);
+  }
+</style>
+
+<div class="cart-items">
+  <% cart.lines.forEach(line => { %>
+    <div class="cart-item">
+      <img src="<%= line.merchandise.imageUrl || '/placeholder.jpg' %>" 
+           alt="<%= line.merchandise.product.title %>"
+           class="cart-item__image"
+           loading="lazy">
+      
+      <div class="cart-item__details">
+        <div class="cart-item__title"><%= line.merchandise.product.title %></div>
+        <div class="cart-item__variant"><%= line.merchandise.title %></div>
+        <div class="cart-item__price">
+          $<%= parseFloat(line.merchandise.priceV2.amount).toFixed(2) %>
+        </div>
+      </div>
+      
+      <div class="cart-item__actions">
+        <input type="number" 
+               value="<%= line.quantity %>"
+               min="0"
+               class="cart-item__quantity"
+               hx-post="/cart/update"
+               hx-vals='{"lineId": "<%= line.id %>"}'
+               hx-trigger="change"
+               hx-target=".cart-items"
+               hx-swap="outerHTML">
+        
+        <button type="button"
+                class="cart-item__remove"
+                hx-post="/cart/remove"
+                hx-vals='{"lineId": "<%= line.id %>"}'
+                hx-target=".cart-items"
+                hx-swap="outerHTML">
+          Remove
+        </button>
+      </div>
+    </div>
+  <% }) %>
+</div>
