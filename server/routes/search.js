@@ -39,15 +39,6 @@ router.get('/', async (req, res, next) => {
     const { q, sort, available, price_max, page } = req.query;
     
     if (!q || q.trim().length === 0) {
-      if (res.locals.isHTMX) {
-        return res.render('pages/search', {
-          query: '',
-          products: [],
-          hasNextPage: false,
-          layout: false,
-        });
-      }
-      
       return res.render('pages/search', {
         query: '',
         products: [],
@@ -88,18 +79,6 @@ router.get('/', async (req, res, next) => {
         hasNextPage,
         page: currentPage,
         query,
-        layout: false,
-      });
-    }
-    
-    // HTMX request: return full search page (no layout)
-    if (res.locals.isHTMX) {
-      return res.render('pages/search', {
-        query,
-        products: paginatedProducts,
-        hasNextPage,
-        currentPage,
-        filters: { sort, available, price_max },
         layout: false,
       });
     }

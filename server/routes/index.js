@@ -29,14 +29,6 @@ router.get('/', async (req, res, next) => {
     
     const featuredCollections = collections.slice(0, 6);
     
-    if (res.locals.isHTMX) {
-      return res.render('pages/home', {
-        collections: featuredCollections,
-        products,
-        layout: false,
-      });
-    }
-    
     res.render('pages/home', {
       collections: featuredCollections,
       products,
