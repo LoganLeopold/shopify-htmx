@@ -6,6 +6,7 @@ import {
   updateCartLine, 
   removeFromCart 
 } from '../services/shopify.js';
+import * as analytics from '../lib/analytics-events.js';
 
 const router = express.Router();
 
@@ -37,6 +38,9 @@ router.get('/', async (req, res, next) => {
       });
     }
     
+    res.trackAnalytics(analytics.viewCart(cart));
+    res.trackAnalytics(analytics.beginCheckout(cart, analytics.requestOrigin(req)));
+    
     res.render('pages/cart', {
       cart,
       layout: 'layouts/base',
@@ -58,6 +62,7 @@ router.get('/drawer', async (req, res, next) => {
     }
     
     const cart = await getCart(req.cartId);
+    res.trackAnalytics(analytics.beginCheckout(cart, analytics.requestOrigin(req)));
     res.render('partials/cart-drawer', {
       cart,
       layout: false,
@@ -106,7 +111,11 @@ router.post('/add', async (req, res, next) => {
     }
     
     // Add item
-    const cart = await addToCart(cartId, variantId, parseInt(quantity, 10));
+    const addedQuantity = parseInt(quantity, 10);
+    const cart = await addToCart(cartId, variantId, addedQuantity);
+    const origin = analytics.requestOrigin(req);
+    res.trackAnalytics(analytics.addToCart(cart, variantId, addedQuantity, origin));
+    res.trackAnalytics(analytics.beginCheckout(cart, origin));
     
     // Update cart ID if changed
     if (cart.id !== cartId) {
@@ -148,6 +157,7 @@ router.post('/update', async (req, res, next) => {
     }
     
     const cart = await getCart(req.cartId);
+    res.trackAnalytics(analytics.beginCheckout(cart, analytics.requestOrigin(req)));
     
     // Trigger cart-updated event
     res.setHeader('HX-Trigger', 'cart-updated');
@@ -173,6 +183,7 @@ router.post('/remove', async (req, res, next) => {
     
     const cart = await removeFromCart(req.cartId, lineId);
     req.setCartId(cart.id);
+    res.trackAnalytics(analytics.beginCheckout(cart, analytics.requestOrigin(req)));
     
     // Trigger cart-updated event
     res.setHeader('HX-Trigger', 'cart-updated');

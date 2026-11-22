@@ -1,5 +1,6 @@
 import express from 'express';
 import { getProduct, getVariantDetails } from '../services/shopify.js';
+import * as analytics from '../lib/analytics-events.js';
 
 const router = express.Router();
 
@@ -15,6 +16,8 @@ router.get('/:handle', async (req, res, next) => {
         title: 'Product Not Found',
       });
     }
+    
+    res.trackAnalytics(analytics.viewItem(product, product.variants[0], analytics.requestOrigin(req)));
     
     res.render('pages/product', {
       product,

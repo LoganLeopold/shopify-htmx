@@ -13,6 +13,7 @@ A hyper-optimized, headless Shopify storefront built with Express, HTMX, and Web
 - **Cart Management** - Server-side cart ID persistence with drawer + full page
 - **Custom Account Pages** - Complete customer portal without redirecting to Shopify
 - **Dual Search** - Predictive dropdown + full search results page
+- **Third-party tags off the main thread** - GA4 + Klaviyo via [Partytown](https://partytown.qwik.dev/), switchable per request (`?third_party=partytown|main|off`) for side-by-side measurement. See [docs/third-party-scripts.md](docs/third-party-scripts.md)
 
 ## Prerequisites
 
@@ -41,6 +42,12 @@ A hyper-optimized, headless Shopify storefront built with Express, HTMX, and Web
    SESSION_SECRET=your_secret_session_key
    PORT=3000
    NODE_ENV=development
+
+   # Optional: third-party tags (see docs/third-party-scripts.md)
+   GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+   KLAVIYO_COMPANY_ID=your_klaviyo_public_key
+   THIRD_PARTY_MODE=partytown   # partytown | main | off
+   THIRD_PARTY_DEBUG=false
    ```
 
 3. **Get your Shopify Storefront Access Token:**
