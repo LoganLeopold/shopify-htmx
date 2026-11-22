@@ -1,0 +1,32 @@
+<%#
+  Main product section. Rendered inside the product page, and on its own via
+  /products/:handle?section_id=main-product (Section Rendering API).
+  Expects: product, variant, options, showOptions, selectedImageIndex, sectionId.
+%>
+<%- include('../blocks/product-styles') %>
+<section class="product-section product-page" data-section-id="<%= sectionId %>">
+  <div class="container product-section__container">
+    <div class="product-section__media">
+      <%- include('../blocks/product-gallery') %>
+    </div>
+
+    <div class="product-section__info">
+      <div>
+        <% if (product.vendor) { %><p class="product-section__vendor"><%= product.vendor %></p><% } %>
+        <h1 class="product-section__title product-page__title"><%= product.title %></h1>
+        <%- include('../blocks/product-price') %>
+      </div>
+
+      <% if (showOptions) { %>
+        <%- include('../blocks/variant-picker') %>
+      <% } %>
+
+      <%- include('../blocks/variant-meta') %>
+      <%- include('../blocks/buy-buttons') %>
+
+      <div class="product-description">
+        <%- product.descriptionHtml || product.description %>
+      </div>
+    </div>
+  </div>
+</section>

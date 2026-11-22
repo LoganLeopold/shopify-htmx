@@ -1,0 +1,8 @@
+<%# SKU + stock line, plus a persistent live region for variant changes. Expects: variant, sectionId. %>
+<p id="variant-meta-<%= sectionId %>" class="variant-meta">
+  <% if (variant.sku) { %><span class="variant-meta__sku">SKU: <%= variant.sku %></span><% } %>
+  <span class="variant-meta__stock variant-meta__stock--<%= variant.availableForSale ? 'in' : 'out' %>">
+    <%= variant.availableForSale ? 'In stock' : 'Out of stock' %>
+  </span>
+</p>
+<div id="variant-status-<%= sectionId %>" class="visually-hidden" role="status" aria-live="polite"><% if (typeof announce !== 'undefined' && announce) { %><%= variant.title %>, <%= formatMoney(variant.priceV2) %><%= variant.availableForSale ? '' : ', sold out' %><% } %></div>

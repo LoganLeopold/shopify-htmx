@@ -1,0 +1,32 @@
+<%#
+  Product media. Expects: product, sectionId, selectedImageIndex.
+  Not swapped on variant change. The server's `variant:update` event (sent in
+  the HX-Trigger header) tells <image-gallery> which image to show, so
+  thumbnail state and zoom handlers survive.
+%>
+<% const start = selectedImageIndex >= 0 ? selectedImageIndex : 0; const mainImage = product.images[start]; %>
+<image-gallery data-section-id="<%= sectionId %>">
+  <div class="gallery-main">
+    <% if (mainImage) { %>
+      <img src="<%= mainImage.url %>"
+           alt="<%= mainImage.altText || product.title %>"
+           class="gallery-main__image"
+           loading="<%= sectionId === 'main-product' ? 'eager' : 'lazy' %>">
+    <% } %>
+  </div>
+  <% if (product.images.length > 1) { %>
+    <div class="gallery-thumbs">
+      <% product.images.forEach((image, index) => { %>
+        <img src="<%= image.url %>"
+             alt="<%= image.altText || product.title %>"
+             class="gallery-thumb<%= index === start ? ' active' : '' %>"
+             data-src="<%= image.url %>"
+             tabindex="0"
+             role="button"
+             aria-label="View image <%= index + 1 %>"
+             loading="lazy"
+             <%= index === start ? 'aria-selected="true"' : '' %>>
+      <% }) %>
+    </div>
+  <% } %>
+</image-gallery>

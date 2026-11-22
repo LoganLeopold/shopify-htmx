@@ -1,0 +1,15 @@
+<%# Price block. Expects: variant, sectionId. %>
+<% const onSale = variant.compareAtPriceV2 && Number(variant.compareAtPriceV2.amount) > Number(variant.priceV2.amount); %>
+<div id="price-<%= sectionId %>" class="price<%= onSale ? ' price--on-sale' : '' %><%= !variant.availableForSale ? ' price--sold-out' : '' %>">
+  <span class="price__current">
+    <% if (onSale) { %><span class="visually-hidden">Sale price</span><% } %>
+    <%= formatMoney(variant.priceV2) %>
+  </span>
+  <% if (onSale) { %>
+    <s class="price__compare"><span class="visually-hidden">Regular price</span><%= formatMoney(variant.compareAtPriceV2) %></s>
+    <span class="price__badge price__badge--sale">Sale</span>
+  <% } %>
+  <% if (!variant.availableForSale) { %>
+    <span class="price__badge price__badge--sold-out">Sold out</span>
+  <% } %>
+</div>

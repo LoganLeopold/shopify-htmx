@@ -1,0 +1,24 @@
+<%#
+  Product recommendations (Shopify's /recommendations/products endpoint).
+  The product page renders an empty placeholder that lazy-loads this section
+  when scrolled into view. Expects: products, sectionId.
+%>
+<% if (products && products.length) { %>
+  <section class="product-recommendations container" data-section-id="<%= sectionId %>">
+    <style>
+      .product-recommendations { padding: var(--space-2xl) var(--container-padding); }
+      .product-recommendations__title { font-size: var(--text-2xl); margin-bottom: var(--space-lg); }
+      .product-recommendations__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--space-lg);
+      }
+    </style>
+    <h2 class="product-recommendations__title">You may also like</h2>
+    <div class="product-recommendations__grid">
+      <% products.forEach(product => { %>
+        <%- include('../partials/product-card', { product }) %>
+      <% }) %>
+    </div>
+  </section>
+<% } %>

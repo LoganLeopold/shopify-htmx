@@ -1,78 +1,56 @@
 import express from 'express';
-import { getProduct, getVariantDetails } from '../services/shopify.js';
+import { getProduct } from '../services/shopify.js';
+import { sendSections } from '../lib/sections.js';
+import { productSectionData, selectionFromRequest } from '../lib/product-view.js';
+import { legacyId } from '../lib/format.js';
 
 const router = express.Router();
 
-// Product detail page
+// Sections that can be rendered in a product's context via ?section_id= / ?sections=
+const PRODUCT_SECTIONS = ['main-product', 'featured-product'];
+
+// Product detail page (+ Section Rendering API)
 router.get('/:handle', async (req, res, next) => {
   try {
     const { handle } = req.params;
     const product = await getProduct(handle);
-    
+
     if (!product) {
       return res.status(404).render('404', {
         layout: 'layouts/base',
         title: 'Product Not Found',
       });
     }
-    
+
+    const data = productSectionData(product, selectionFromRequest(req));
+
+    if (res.locals.isHTMX && req.query.section_id) {
+      // Horizon-style variant:update event: lets components outside the
+      // swapped blocks (the media gallery) react without being re-rendered.
+      res.set('HX-Trigger', JSON.stringify({
+        'variant:update': {
+          sectionId: req.query.section_id,
+          variantId: data.variant.id,
+          imageIndex: data.selectedImageIndex,
+          available: data.variant.availableForSale,
+        },
+      }));
+
+      // Like Horizon, the PDP's URL tracks the selected variant (shareable,
+      // reload-safe). A featured product elsewhere leaves the URL alone.
+      if (req.query.section_id === 'main-product') {
+        res.set('HX-Replace-Url', `/products/${product.handle}?variant=${legacyId(data.variant.id)}`);
+      }
+    }
+
+    const handled = await sendSections(req, res, PRODUCT_SECTIONS, { ...data, announce: true });
+    if (handled) return;
+
     res.render('pages/product', {
-      product,
+      ...data,
       layout: 'layouts/base',
       title: product.title,
     });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Variant details (HTMX endpoint for price updates)
-router.get('/:handle/variant-details', async (req, res, next) => {
-  try {
-    const { variantId } = req.query;
-    
-    if (!variantId) {
-      return res.status(400).send('<div class="error">Variant ID required</div>');
-    }
-    
-    const variant = await getVariantDetails(variantId);
-    
-    if (!variant) {
-      return res.status(404).send('<div class="error">Variant not found</div>');
-    }
-    
-    res.render('partials/product-price', {
-      variant,
-      layout: false,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Image swap (HTMX endpoint)
-router.get('/:handle/image/:index', async (req, res, next) => {
-  try {
-    const { handle, index } = req.params;
-    const product = await getProduct(handle);
-    
-    if (!product) {
-      return res.status(404).send('<div class="error">Product not found</div>');
-    }
-    
-    const imageIndex = parseInt(index, 10);
-    const image = product.images[imageIndex];
-    
-    if (!image) {
-      return res.status(404).send('<div class="error">Image not found</div>');
-    }
-    
-    res.send(`
-      <img src="${image.url}" 
-           alt="${image.altText || product.title}" 
-           class="gallery-main__image"
-           loading="lazy">
-    `);
   } catch (error) {
     next(error);
   }
