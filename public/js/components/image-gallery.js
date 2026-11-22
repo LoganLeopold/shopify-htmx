@@ -6,7 +6,7 @@ class ImageGallery extends HTMLElement {
   connectedCallback() {
     this.mainImage = this.querySelector('.gallery-main img');
     this.thumbnails = this.querySelectorAll('.gallery-thumb');
-    this.currentIndex = 0;
+    this.currentIndex = Math.max(0, [...this.thumbnails].findIndex(t => t.classList.contains('active')));
     
     if (!this.mainImage) {
       console.warn('ImageGallery: missing main image');
@@ -46,10 +46,24 @@ class ImageGallery extends HTMLElement {
     
     // Make gallery focusable for keyboard nav
     this.setAttribute('tabindex', '0');
+    
+    // Variant changes (server sends `variant:update` via HX-Trigger): show
+    // the selected variant's image if it belongs to this gallery's section.
+    this.onVariantUpdate = (event) => {
+      const { sectionId, imageIndex } = event.detail || {};
+      if (sectionId !== this.dataset.sectionId) return;
+      if (Number.isInteger(imageIndex) && imageIndex >= 0) this.setImage(imageIndex);
+    };
+    document.addEventListener('variant:update', this.onVariantUpdate);
+  }
+  
+  disconnectedCallback() {
+    document.removeEventListener('variant:update', this.onVariantUpdate);
   }
   
   setImage(index) {
     if (index < 0 || index >= this.thumbnails.length) return;
+    if (index === this.currentIndex && this.thumbnails[index].classList.contains('active')) return;
     
     this.currentIndex = index;
     const thumbnail = this.thumbnails[index];

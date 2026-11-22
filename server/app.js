@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
+import { formatMoney, legacyId } from './lib/format.js';
 
 // Import middleware
 import htmxMiddleware from './middleware/htmx.js';
@@ -21,6 +22,7 @@ import productRoutes from './routes/products.js';
 import cartRoutes from './routes/cart.js';
 import searchRoutes from './routes/search.js';
 import accountRoutes from './routes/account.js';
+import recommendationRoutes from './routes/recommendations.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,6 +67,10 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
 app.set('view cache', config.server.env === 'production');
 
+// Template helpers
+app.locals.formatMoney = formatMoney;
+app.locals.legacyId = legacyId;
+
 // Static files with performance middleware
 app.use(express.static(path.join(__dirname, '../public'), {
   maxAge: '1y',
@@ -86,6 +92,7 @@ app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
 app.use('/search', searchRoutes);
 app.use('/account', accountRoutes);
+app.use('/recommendations', recommendationRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {

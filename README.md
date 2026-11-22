@@ -13,6 +13,7 @@ A hyper-optimized, headless Shopify storefront built with Express, HTMX, and Web
 - **Cart Management** - Server-side cart ID persistence with drawer + full page
 - **Custom Account Pages** - Complete customer portal without redirecting to Shopify
 - **Dual Search** - Predictive dropdown + full search results page
+- **Shopify-style sections** - Horizon-like variant picker, featured product and product recommendations built on a Section Rendering API clone (`?section_id=` / `?sections=`). See [docs/section-rendering.md](docs/section-rendering.md)
 
 ## Prerequisites
 
@@ -39,6 +40,7 @@ A hyper-optimized, headless Shopify storefront built with Express, HTMX, and Web
    SHOPIFY_STOREFRONT_ACCESS_TOKEN=your_storefront_access_token
    SHOPIFY_API_VERSION=2024-01
    SESSION_SECRET=your_secret_session_key
+   FEATURED_PRODUCT_HANDLE=   # optional: home page featured product (defaults to top seller)
    PORT=3000
    NODE_ENV=development
    ```
@@ -142,7 +144,8 @@ shopify-htmx/
 - `/cart/add` - Add to cart (POST)
 - `/cart/update` - Update quantity (POST)
 - `/cart/remove` - Remove item (POST)
-- `/products/:handle/variant-details` - Variant price update
+- `/products/:handle?section_id=main-product` - Section Rendering API (variant picker, featured product); `?sections=a,b` returns JSON
+- `/recommendations/products?product_id=…&section_id=product-recommendations` - Product recommendations section
 
 ### Customization
 

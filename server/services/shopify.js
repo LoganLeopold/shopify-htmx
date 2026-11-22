@@ -227,6 +227,8 @@ export async function getProduct(handle) {
         description
         descriptionHtml
         handle
+        vendor
+        productType
         priceRange {
           minVariantPrice {
             amount
@@ -250,13 +252,22 @@ export async function getProduct(handle) {
             node {
               id
               title
+              sku
               availableForSale
               priceV2 {
                 amount
                 currencyCode
               }
+              compareAtPriceV2 {
+                amount
+                currencyCode
+              }
               image {
                 url
+              }
+              selectedOptions {
+                name
+                value
               }
             }
           }
@@ -298,29 +309,44 @@ export async function getProduct(handle) {
 }
 
 /**
- * Get variant details for price updates
+ * Product recommendations (Storefront API `productRecommendations`), mapped
+ * to the same shape as collection products so product cards can render them.
  */
-export async function getVariantDetails(variantId) {
+export async function getProductRecommendations(productId, limit = 4) {
   const query = `
-    query getVariant($id: ID!) {
-      node(id: $id) {
-        ... on ProductVariant {
-          id
-          priceV2 {
+    query productRecommendations($productId: ID!) {
+      productRecommendations(productId: $productId) {
+        id
+        title
+        handle
+        priceRange {
+          minVariantPrice {
             amount
             currencyCode
           }
-          availableForSale
+        }
+        images(first: 1) {
+          edges {
+            node {
+              url
+              altText
+            }
+          }
         }
       }
     }
   `;
-  
+
   try {
-    const data = await shopifyClient.request(query, { id: variantId });
-    return data.node;
+    const data = await shopifyClient.request(query, { productId });
+    return (data.productRecommendations || []).slice(0, limit).map(product => ({
+      ...product,
+      image: product.images.edges[0]?.node || null,
+      price: product.priceRange.minVariantPrice,
+      imageUrl: optimizeImageUrl(product.images.edges[0]?.node?.url, { width: 400, format: 'webp' }),
+    }));
   } catch (error) {
-    console.error('Error fetching variant:', error);
+    console.error('Error fetching product recommendations:', error);
     throw error;
   }
 }

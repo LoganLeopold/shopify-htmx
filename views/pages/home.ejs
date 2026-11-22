@@ -87,6 +87,12 @@
     </section>
   <% } %>
   
+  <% if (featuredProduct) { %>
+    <div id="shopify-section-featured-product" class="shopify-section">
+      <%- include('../sections/featured-product', { ...featuredProduct, sectionId: 'featured-product' }) %>
+    </div>
+  <% } %>
+  
   <% if (products && products.length > 0) { %>
     <section class="home-section">
       <h2 class="home-section__title">Featured Products</h2>

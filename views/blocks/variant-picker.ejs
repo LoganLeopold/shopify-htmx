@@ -1,0 +1,56 @@
+<%#
+  Variant picker block (Horizon-style). Expects: product, options (from
+  optionStates), sectionId.
+
+  Each radio requests the product URL with section_id=<sectionId> on change.
+  The response is the whole section; hx-select-oob swaps only the blocks
+  that depend on the variant. The status line keeps its node (innerHTML swap)
+  so screen readers announce it. Each radio has a stable id, so htmx restores
+  keyboard focus after the picker is swapped.
+
+  Without JS the form submits as a normal GET, and the product page resolves
+  options[Name]=Value to a variant server-side.
+%>
+<%
+  const sid = sectionId;
+  const swapTargets = ['variant-picker', 'price', 'variant-id', 'add-to-cart', 'variant-meta']
+    .map(block => `#${block}-${sid}`)
+    .concat(`#variant-status-${sid}:innerHTML`)
+    .join(',');
+%>
+<form id="variant-picker-<%= sid %>"
+      class="variant-picker"
+      action="/products/<%= product.handle %>"
+      method="get"
+      hx-include="this"
+      hx-vals='<%- JSON.stringify({ section_id: sid }) %>'
+      hx-target="this"
+      hx-swap="none"
+      hx-push-url="false"
+      hx-sync="this:replace"
+      hx-select-oob="<%= swapTargets %>">
+  <% options.forEach((option, i) => { %>
+    <fieldset class="variant-picker__option">
+      <legend class="variant-picker__legend">
+        <%= option.name %>: <span class="variant-picker__selected"><%= option.selectedValue %></span>
+      </legend>
+      <div class="variant-picker__values">
+        <% option.values.forEach((v, j) => { const inputId = `${sid}-option-${i}-${j}`; %>
+          <input type="radio"
+                 class="variant-picker__input"
+                 id="<%= inputId %>"
+                 name="options[<%= option.name %>]"
+                 value="<%= v.value %>"
+                 hx-get="/products/<%= product.handle %>"
+                 hx-trigger="change"
+                 <%= v.selected ? 'checked' : '' %>>
+          <label for="<%= inputId %>"
+                 class="variant-picker__pill<%= !v.exists ? ' is-unavailable' : (!v.available ? ' is-sold-out' : '') %>">
+            <%= v.value %><% if (!v.available) { %><span class="visually-hidden"><%= v.exists ? ', sold out' : ', unavailable' %></span><% } %>
+          </label>
+        <% }) %>
+      </div>
+    </fieldset>
+  <% }) %>
+  <noscript><button type="submit" class="variant-picker__submit">Update selection</button></noscript>
+</form>

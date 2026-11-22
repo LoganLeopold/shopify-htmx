@@ -1,0 +1,44 @@
+<%#
+  Featured product section (as on Shopify's home page). It uses the same
+  blocks as the product page; its picker requests
+  /products/:handle?section_id=featured-product, so the product page renders
+  this section in that product's context, just like Shopify.
+  Expects: product, variant, options, showOptions, selectedImageIndex, sectionId.
+%>
+<%- include('../blocks/product-styles') %>
+<style>
+  .featured-product { padding: var(--space-2xl) 0; }
+  .featured-product__eyebrow {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+  .featured-product__link { color: inherit; }
+  .featured-product__more { font-size: var(--text-sm); text-decoration: underline; }
+</style>
+<section class="product-section featured-product" data-section-id="<%= sectionId %>">
+  <div class="container product-section__container">
+    <div class="product-section__media">
+      <%- include('../blocks/product-gallery') %>
+    </div>
+
+    <div class="product-section__info">
+      <div>
+        <p class="featured-product__eyebrow">Featured product</p>
+        <h2 class="product-section__title">
+          <a class="featured-product__link" href="/products/<%= product.handle %>"><%= product.title %></a>
+        </h2>
+        <%- include('../blocks/product-price') %>
+      </div>
+
+      <% if (showOptions) { %>
+        <%- include('../blocks/variant-picker') %>
+      <% } %>
+
+      <%- include('../blocks/variant-meta') %>
+      <%- include('../blocks/buy-buttons') %>
+
+      <a class="featured-product__more" href="/products/<%= product.handle %>?variant=<%= legacyId(variant.id) %>">View full details</a>
+    </div>
+  </div>
+</section>

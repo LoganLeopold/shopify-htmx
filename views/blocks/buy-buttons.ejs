@@ -1,0 +1,31 @@
+<%#
+  Buy buttons block. Expects: variant, sectionId.
+  Only the hidden variant id and the button are swapped on variant change,
+  so the shopper's quantity is preserved. <cart-drawer> opens itself after
+  any /cart/add request. (The old inline hx-on handler needed 'unsafe-eval',
+  which the CSP blocks.)
+%>
+<form class="product-form"
+      hx-post="/cart/add"
+      hx-target="#cart-drawer-container"
+      hx-swap="innerHTML">
+  <input type="hidden" id="variant-id-<%= sectionId %>" name="variantId" value="<%= variant.id %>">
+
+  <div class="product-form__group">
+    <label for="quantity-<%= sectionId %>" class="product-form__label">Quantity</label>
+    <input type="number"
+           name="quantity"
+           id="quantity-<%= sectionId %>"
+           value="1"
+           min="1"
+           class="product-form__input"
+           required>
+  </div>
+
+  <button type="submit"
+          id="add-to-cart-<%= sectionId %>"
+          class="product-form__button"
+          <%= !variant.availableForSale ? 'disabled' : '' %>>
+    <%= variant.availableForSale ? 'Add to cart' : 'Sold out' %>
+  </button>
+</form>

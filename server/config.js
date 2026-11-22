@@ -30,6 +30,11 @@ export const config = {
     secret: process.env.SESSION_SECRET,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
+  storefront: {
+    // Product shown in the home page's featured product section
+    // (defaults to the first best-selling product)
+    featuredProductHandle: process.env.FEATURED_PRODUCT_HANDLE || '',
+  },
   server: {
     port: parseInt(process.env.PORT || '3000', 10),
     env: process.env.NODE_ENV || 'development',
