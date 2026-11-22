@@ -6,6 +6,7 @@ import {
   getCustomerOrders 
 } from '../services/shopify.js';
 import { requireAuth } from '../middleware/auth.js';
+import * as analytics from '../lib/analytics-events.js';
 
 const router = express.Router();
 
@@ -132,6 +133,8 @@ router.get('/', requireAuth, async (req, res, next) => {
       req.session.destroy();
       return res.redirect('/account/login');
     }
+    
+    res.trackAnalytics(analytics.identify(customer));
     
     res.render('pages/account/dashboard', {
       customer,

@@ -68,6 +68,8 @@ export async function getProducts(collectionHandle, options = {}) {
                 title
                 handle
                 description
+                vendor
+                productType
                 priceRange {
                   minVariantPrice {
                     amount
@@ -86,6 +88,7 @@ export async function getProducts(collectionHandle, options = {}) {
                   edges {
                     node {
                       id
+                      sku
                       availableForSale
                       priceV2 {
                         amount
@@ -114,6 +117,8 @@ export async function getProducts(collectionHandle, options = {}) {
               title
               handle
               description
+              vendor
+              productType
               priceRange {
                 minVariantPrice {
                   amount
@@ -132,6 +137,7 @@ export async function getProducts(collectionHandle, options = {}) {
                 edges {
                   node {
                     id
+                    sku
                     availableForSale
                     priceV2 {
                       amount
@@ -227,6 +233,8 @@ export async function getProduct(handle) {
         description
         descriptionHtml
         handle
+        vendor
+        productType
         priceRange {
           minVariantPrice {
             amount
@@ -250,8 +258,13 @@ export async function getProduct(handle) {
             node {
               id
               title
+              sku
               availableForSale
               priceV2 {
+                amount
+                currencyCode
+              }
+              compareAtPriceV2 {
                 amount
                 currencyCode
               }
@@ -498,12 +511,17 @@ export async function getCart(cartId) {
                 ... on ProductVariant {
                   id
                   title
+                  sku
                   priceV2 {
                     amount
                     currencyCode
                   }
                   product {
+                    id
                     title
+                    handle
+                    vendor
+                    productType
                   }
                   image {
                     url

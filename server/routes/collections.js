@@ -1,5 +1,6 @@
 import express from 'express';
 import { getCollections, getCollection, getProducts } from '../services/shopify.js';
+import * as analytics from '../lib/analytics-events.js';
 
 const router = express.Router();
 
@@ -54,6 +55,9 @@ router.get('/:handle', async (req, res, next) => {
         layout: false,
       });
     }
+    
+    // Filter/sort grid refreshes above don't count as a new list view.
+    res.trackAnalytics(analytics.viewItemList(collection.handle, collection.title, products));
     
     // Full page request
     res.render('pages/collection', {

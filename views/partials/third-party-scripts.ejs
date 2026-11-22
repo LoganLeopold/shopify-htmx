@@ -1,0 +1,40 @@
+<%#
+  Third-party tags (GA4 + Klaviyo). The vendor snippets are the classic install
+  snippets; the only difference between modes is the script `type`:
+    text/partytown  -> executed by Partytown in a web worker
+    text/javascript -> executed on the main thread, as vendors document it
+  See server/lib/third-party.js and docs/third-party-scripts.md.
+%>
+<% const tp = locals.thirdParty || {}; %>
+<% if (tp.mode && tp.mode !== 'off') { %>
+  <script>
+    window.analyticsConfig = <%- JSON.stringify({ mode: tp.mode, debug: tp.debug }) %>;
+  </script>
+
+  <% if (tp.mode === 'partytown') { %>
+    <!-- Partytown <%= tp.partytownVersion %> bootstrap -->
+    <script><%- tp.partytownSnippet %></script>
+  <% } %>
+
+  <% if (tp.ga4MeasurementId) { %>
+    <!-- Google tag (gtag.js) -->
+    <script type="<%= tp.scriptType %>" async src="https://www.googletagmanager.com/gtag/js?id=<%= encodeURIComponent(tp.ga4MeasurementId) %>"></script>
+    <script type="<%= tp.scriptType %>">
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() { window.dataLayer.push(arguments); };
+      gtag('js', new Date());
+      // page_view is sent by /js/analytics.js so HTMX navigations are counted too.
+      gtag('config', <%- JSON.stringify(tp.ga4MeasurementId) %>, <%- JSON.stringify(Object.assign({ send_page_view: false }, tp.debug ? { debug_mode: true } : {})) %>);
+    </script>
+  <% } %>
+
+  <% if (tp.klaviyoCompanyId) { %>
+    <!-- Klaviyo onsite (klaviyo.js) — object stub first, then the library -->
+    <script type="<%= tp.scriptType %>">
+      !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
+    </script>
+    <script type="<%= tp.scriptType %>" async src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=<%= encodeURIComponent(tp.klaviyoCompanyId) %>"></script>
+  <% } %>
+
+  <script type="module" src="/js/analytics.js"></script>
+<% } %>

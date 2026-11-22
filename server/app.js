@@ -5,6 +5,12 @@ import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
+import {
+  thirdPartyMiddleware,
+  analyticsEventsMiddleware,
+  thirdPartyRouter,
+  contentSecurityPolicyDirectives,
+} from './lib/third-party.js';
 
 // Import middleware
 import htmxMiddleware from './middleware/htmx.js';
@@ -27,16 +33,14 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Third-party script mode (Partytown / main thread / off) — must run before
+// helmet because the CSP depends on the mode chosen for this request.
+app.use(thirdPartyMiddleware);
+
 // Security headers
 app.use(helmet({
   contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'"],
-    },
+    directives: contentSecurityPolicyDirectives(),
   },
 }));
 
@@ -71,10 +75,15 @@ app.use(express.static(path.join(__dirname, '../public'), {
   immutable: true,
 }));
 
+// Partytown lib files + allowlisted script proxy (before session/layout so
+// worker requests don't create sessions or hit the Storefront API)
+app.use(thirdPartyRouter());
+
 // Global middleware (order matters)
 app.use(performanceMiddleware);
 app.use(htmxMiddleware);
 app.use(renderLayoutMiddleware);
+app.use(analyticsEventsMiddleware);
 app.use(cartMiddleware);
 app.use(authMiddleware);
 app.use(layoutMiddleware);

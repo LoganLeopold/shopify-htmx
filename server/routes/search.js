@@ -1,5 +1,6 @@
 import express from 'express';
 import { searchProducts, getProducts } from '../services/shopify.js';
+import * as analytics from '../lib/analytics-events.js';
 
 const router = express.Router();
 
@@ -82,6 +83,8 @@ router.get('/', async (req, res, next) => {
         layout: false,
       });
     }
+    
+    res.trackAnalytics(analytics.search(query, products));
     
     // Full page request
     res.render('pages/search', {
