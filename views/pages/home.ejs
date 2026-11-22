@@ -60,9 +60,11 @@
 
 <div class="home">
   <section class="home-hero">
-    <h1 class="home-hero__title">
-      <%= siteConfig?.heroTitle || 'Welcome' %>
-    </h1>
+    <split-text type="chars" effect="fade" stagger="25" trigger="load">
+      <h1 class="home-hero__title">
+        <%= siteConfig?.heroTitle || 'Welcome' %>
+      </h1>
+    </split-text>
     <p class="home-hero__description">
       <%= siteConfig?.heroDescription || 'Discover our amazing products' %>
     </p>
@@ -70,7 +72,7 @@
   
   <% if (collections && collections.length > 0) { %>
     <section class="home-section">
-      <h2 class="home-section__title">Shop Collections</h2>
+      <split-text type="words"><h2 class="home-section__title">Shop Collections</h2></split-text>
       <div class="collection-grid">
         <% collections.forEach(collection => { %>
           <a href="/collections/<%= collection.handle %>" class="collection-card">
@@ -89,7 +91,7 @@
   
   <% if (products && products.length > 0) { %>
     <section class="home-section">
-      <h2 class="home-section__title">Featured Products</h2>
+      <split-text type="words"><h2 class="home-section__title">Featured Products</h2></split-text>
       <div class="product-grid">
         <% products.forEach(product => { %>
           <%- include('../partials/product-card', { product }) %>

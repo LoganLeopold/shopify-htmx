@@ -20,7 +20,9 @@
 
 <div class="collection-page">
   <div class="collection-page__header">
-    <h1 class="collection-page__title"><%= collection.title %></h1>
+    <split-text type="words" trigger="load">
+      <h1 class="collection-page__title"><%= collection.title %></h1>
+    </split-text>
     <% if (collection.description) { %>
       <div class="collection-page__description">
         <%- collection.descriptionHtml || collection.description %>

@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof title !== 'undefined' ? title : siteConfig?.name || 'Shop' %></title>
   
+  <!-- Bare module specifiers (e.g. 'griffo') -> versioned /vendor/ URLs.
+       Must precede every module script. -->
+  <script type="importmap"><%- importMap %></script>
+  <% modulePreloads.forEach(href => { %>
+  <link rel="modulepreload" href="<%= href %>">
+  <% }) %>
+  
   <!-- Resource hints for performance -->
   <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.shopify.com">
@@ -36,6 +43,7 @@
   <script type="module" src="/js/components/cart-drawer.js"></script>
   <script type="module" src="/js/components/image-gallery.js"></script>
   <script type="module" src="/js/components/price-range.js"></script>
+  <script type="module" src="/js/components/split-text.js"></script>
   
   <!-- Service Worker Registration -->
   <script>

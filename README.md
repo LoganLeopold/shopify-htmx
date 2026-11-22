@@ -13,6 +13,7 @@ A hyper-optimized, headless Shopify storefront built with Express, HTMX, and Web
 - **Cart Management** - Server-side cart ID persistence with drawer + full page
 - **Custom Account Pages** - Complete customer portal without redirecting to Shopify
 - **Dual Search** - Predictive dropdown + full search results page
+- **Kerning-aware text reveals** - `<split-text>` animates headings with [Griffo](https://griffo.dev) + the Web Animations API, safe across HTMX swaps and history, reduced-motion aware, and reverts to plain text when done
 
 ## Prerequisites
 
@@ -143,6 +144,28 @@ shopify-htmx/
 - `/cart/update` - Update quantity (POST)
 - `/cart/remove` - Remove item (POST)
 - `/products/:handle/variant-details` - Variant price update
+
+### Browser modules without a bundler
+
+npm packages that ship browser ES modules are served from `node_modules` at a
+versioned path (`/vendor/<name>@<version>/`, cached as immutable) and mapped
+with an import map in the layout, so components can
+`import { splitText } from 'griffo'`. Add packages in `server/lib/vendor.js`.
+
+### Text animation
+
+Wrap any heading in `<split-text>`:
+
+```html
+<split-text type="words" effect="rise" stagger="40" trigger="visible">
+  <h2>Featured Products</h2>
+</split-text>
+```
+
+`type`: `chars` | `words` | `lines`. `effect`: `rise` (masked) | `fade`.
+`trigger`: `visible` (on scroll into view) | `load`. See
+`public/js/components/split-text.js` for the HTMX/history/accessibility
+details.
 
 ### Customization
 

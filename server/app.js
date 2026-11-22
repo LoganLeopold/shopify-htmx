@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
+import { vendorRouter, importMap, modulePreloads } from './lib/vendor.js';
 
 // Import middleware
 import htmxMiddleware from './middleware/htmx.js';
@@ -70,6 +71,11 @@ app.use(express.static(path.join(__dirname, '../public'), {
   maxAge: '1y',
   immutable: true,
 }));
+
+// Versioned browser modules from node_modules (e.g. /vendor/griffo@1.1.1/)
+app.use(vendorRouter());
+app.locals.importMap = importMap;
+app.locals.modulePreloads = modulePreloads;
 
 // Global middleware (order matters)
 app.use(performanceMiddleware);
