@@ -8,6 +8,7 @@ import { config } from './config.js';
 
 // Import middleware
 import htmxMiddleware from './middleware/htmx.js';
+import renderLayoutMiddleware from './middleware/render-layout.js';
 import cartMiddleware from './middleware/cart.js';
 import authMiddleware from './middleware/auth.js';
 import layoutMiddleware from './middleware/layout.js';
@@ -73,6 +74,7 @@ app.use(express.static(path.join(__dirname, '../public'), {
 // Global middleware (order matters)
 app.use(performanceMiddleware);
 app.use(htmxMiddleware);
+app.use(renderLayoutMiddleware);
 app.use(cartMiddleware);
 app.use(authMiddleware);
 app.use(layoutMiddleware);

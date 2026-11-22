@@ -37,13 +37,6 @@ router.get('/', async (req, res, next) => {
       });
     }
     
-    if (res.locals.isHTMX) {
-      return res.render('pages/cart', {
-        cart,
-        layout: false,
-      });
-    }
-    
     res.render('pages/cart', {
       cart,
       layout: 'layouts/base',

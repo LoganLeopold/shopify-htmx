@@ -133,13 +133,6 @@ router.get('/', requireAuth, async (req, res, next) => {
       return res.redirect('/account/login');
     }
     
-    if (res.locals.isHTMX) {
-      return res.render('pages/account/dashboard', {
-        customer,
-        layout: false,
-      });
-    }
-    
     res.render('pages/account/dashboard', {
       customer,
       layout: 'layouts/base',
@@ -154,13 +147,6 @@ router.get('/', requireAuth, async (req, res, next) => {
 router.get('/orders', requireAuth, async (req, res, next) => {
   try {
     const orders = await getCustomerOrders(req.customerAccessToken);
-    
-    if (res.locals.isHTMX) {
-      return res.render('pages/account/orders', {
-        orders,
-        layout: false,
-      });
-    }
     
     res.render('pages/account/orders', {
       orders,

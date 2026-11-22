@@ -3,7 +3,10 @@
  * Detects HTMX requests and sets helpful locals
  */
 export function htmxMiddleware(req, res, next) {
-  const isHTMX = req.headers['hx-request'] === 'true';
+  // History-restore requests (cache miss on back/forward) replace the whole
+  // <body>, so they need a full document — treat them as regular page loads.
+  const isHistoryRestore = req.headers['hx-history-restore-request'] === 'true';
+  const isHTMX = req.headers['hx-request'] === 'true' && !isHistoryRestore;
   const isBoosted = req.headers['hx-boosted'] === 'true';
   const currentUrl = req.headers['hx-current-url'] || req.url;
   const target = req.headers['hx-target'];

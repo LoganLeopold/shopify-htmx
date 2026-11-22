@@ -16,13 +16,6 @@ router.get('/:handle', async (req, res, next) => {
       });
     }
     
-    if (res.locals.isHTMX) {
-      return res.render('pages/product', {
-        product,
-        layout: false,
-      });
-    }
-    
     res.render('pages/product', {
       product,
       layout: 'layouts/base',

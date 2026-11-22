@@ -8,13 +8,6 @@ router.get('/', async (req, res, next) => {
   try {
     const collections = await getCollections();
     
-    if (res.locals.isHTMX) {
-      return res.render('pages/collection-list', {
-        collections,
-        layout: false,
-      });
-    }
-    
     res.render('pages/collection-list', {
       collections,
       layout: 'layouts/base',
@@ -58,19 +51,6 @@ router.get('/:handle', async (req, res, next) => {
         endCursor,
         page: options.page,
         collectionHandle: handle,
-        layout: false,
-      });
-    }
-    
-    // HTMX request: return full collection page (no layout)
-    if (res.locals.isHTMX) {
-      return res.render('pages/collection', {
-        collection,
-        products,
-        hasNextPage,
-        endCursor,
-        currentPage: options.page,
-        filters: { sort, available, price_max },
         layout: false,
       });
     }
