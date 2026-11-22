@@ -90,3 +90,27 @@ a:hover {
 
 .mt-auto { margin-top: auto; }
 .mb-auto { margin-bottom: auto; }
+
+/* <split-text> (public/js/components/split-text.js)
+   Hide text that is about to be animated so it doesn't flash at full opacity
+   before the split. Only applies when scripts run and motion is allowed. If
+   the module never upgrades the element (failed load, old browser), the
+   failsafe animation reveals the text after 1.5s. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  split-text:not([data-state]) {
+    opacity: 0;
+    animation: split-text-failsafe 0s 1.5s forwards;
+  }
+
+  split-text[data-state="waiting"] {
+    opacity: 0;
+  }
+}
+
+split-text {
+  display: block;
+}
+
+@keyframes split-text-failsafe {
+  to { opacity: 1; }
+}

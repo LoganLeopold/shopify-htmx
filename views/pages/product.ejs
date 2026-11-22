@@ -97,7 +97,9 @@
     </div>
     
     <div class="product-page__info">
-      <h1 class="product-page__title"><%= product.title %></h1>
+      <split-text type="words" trigger="load">
+        <h1 class="product-page__title"><%= product.title %></h1>
+      </split-text>
       
       <div id="product-price" class="product-price">
         $<%= parseFloat(product.variants[0]?.priceV2?.amount || product.priceRange.minVariantPrice.amount).toFixed(2) %>
